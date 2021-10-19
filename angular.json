@@ -1,9 +1,12 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "1454ffb6-304a-4202-b75b-b4ff53b2a505"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "mtn": {
+    "MTNUserManagement": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/mtn",
+            "outputPath": "dist/MTNUserManagement",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -30,9 +33,7 @@
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -71,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "mtn:build:production"
+              "browserTarget": "MTNUserManagement:build:production"
             },
             "development": {
-              "browserTarget": "mtn:build:development"
+              "browserTarget": "MTNUserManagement:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "mtn:build"
+            "browserTarget": "MTNUserManagement:build"
           }
         },
         "test": {
@@ -105,8 +106,5 @@
       }
     }
   },
-  "defaultProject": "mtn",
-  "cli": {
-    "defaultCollection": "@ngrx/schematics"
-  }
+  "defaultProject": "MTNUserManagement"
 }

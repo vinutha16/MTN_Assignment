@@ -1,3 +1,6 @@
 .username{
     text-align: center;
 }
+.logoutBtn{
+    float: right;
+}

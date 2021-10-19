@@ -1,12 +1,10 @@
-<div>
-    <div class="row">
-        <div class="col-sm-6">
-            <span *ngIf="user.email">
-                <h4 class="username">Welcome {{user.email.slice(0, user.email.indexOf('@'))}} to MTN Project</h4>
-            </span>
-        </div>
-        <div class="col-sm-6">
-            <button (click)="logout()" class="btn btn-secondary" style="float: right;">Logout</button>
-        </div>
+<div class="row">
+    <div class="col-sm-6">
+        <span *ngIf="user.email">
+            <h4 class="username">Welcome {{user.email.slice(0, user.email.indexOf('@'))}} to MTN Project</h4>
+        </span>
+    </div>
+    <div class="col-sm-6">
+        <button (click)="logout()" class="btn btn-secondary logoutBtn">Logout</button>
     </div>
 </div>

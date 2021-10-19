@@ -1,139 +1,109 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormsModule,FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Store } from '@ngrx/store';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { StoreModule } from '@ngrx/store';
+import { appReducer } from 'src/app/app.state';
 import { userService } from '../user.service';
 
 import { LoginComponent } from './login.component';
 
-let form = new FormGroup({
-  username : new FormControl('',[Validators.required,Validators.email]),
-  password : new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(20)])
-})
-
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  const authenticationServiceApiSpy =
+    jasmine.createSpyObj<userService>('userService', [
+      'userLogin',
+    ]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      declarations: [LoginComponent],
       imports: [
         ReactiveFormsModule,
-        HttpClientModule
+        RouterTestingModule,
+        StoreModule.forRoot(appReducer, {}),
       ],
       providers: [
-        userService,
-        HttpClient,
-        RouterTestingModule,
-        provideMockStore({}),
+        {
+          provide: userService,
+          useValue: authenticationServiceApiSpy,
+        },
       ],
-      declarations: [LoginComponent],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('created a form with username and password input and login button', () => {
-    // const fixture = TestBed.createComponent(LoginComponent);
-    const username = fixture.debugElement.nativeElement.querySelector('#username');
-    const password = fixture.debugElement.nativeElement.querySelector('#password');
-    const loginBtn = fixture.debugElement.nativeElement.querySelector('#login');
-    expect(username).toBeDefined();
-    expect(password).toBeDefined();
-    expect(loginBtn).toBeDefined();
+  it('component initial state', () => {
+    expect(component.submitted).toBeFalsy();
+    expect(component.loginForm).toBeDefined();
+    expect(component.loginForm.invalid).toBeTruthy();
   });
 
-  it('Display Username Error Msg when Username is blank', () => {
-    form.get('username').setValue('');
-    form.get('password').setValue('123456');
-
-    const button = fixture.debugElement.nativeElement.querySelector('#login');
-    button.click();
-    fixture.detectChanges();
-
-    const usernameErrorMsg = fixture.debugElement.nativeElement.querySelector('#username-error-msg');
-    expect(usernameErrorMsg).toBeDefined();
-    expect(usernameErrorMsg.innerHTML).toContain('Please enter username');
-  });
-
-  // it('Display invalid username Error Msg when Username is invalid', () => {
-  //   form.get('username').setValue('.com');
-  //   form.get('password').setValue('123456');
-
-  //   const button = fixture.debugElement.nativeElement.querySelector('#login');
-  //   button.click();
-  //   fixture.detectChanges();
-
-  //   const usernameErrorMsg = fixture.debugElement.nativeElement.querySelector('#username-error-invalid');
-  //   expect(usernameErrorMsg).toBeDefined();
-  //   expect(usernameErrorMsg.innerHTML).toContain('Please enter correct username');
-  // });
-
-  it('Display Password Error Msg when Password is blank', () => {
-    form.get('username').setValue('V@gmail.com');
-    form.get('password').setValue('');
-
-    const button = fixture.debugElement.nativeElement.querySelector('#login');
-    button.click();
-    fixture.detectChanges();
-
-    const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('#password-error-msg');
-    expect(passwordErrorMsg).toBeDefined();
-    expect(passwordErrorMsg.innerHTML).toContain('Please enter password');
+  it('Form should be invalid', () => {
+    const controls = component.f;
+    controls.username.setValue('sample@ibm.com');
+    controls.password.setValue('ibm@');
+    component.onLogin();
+    expect(component.loginForm.valid).toBeFalsy();
   });
 
   it('Display Both Username & Password Error Msg when both field is blank', () => {
-    form.get('username').setValue('');
-    form.get('password').setValue('');
+    const controls = component.f;
+    controls.username.setValue('');
+    controls.password.setValue('');
+    component.onLogin();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.nativeElement.querySelector('#login');
-    button.click();
-    fixture.detectChanges();
+    const emailErrorMsg = fixture.debugElement.nativeElement.querySelector('.email-required');
+    const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('.password-required');
 
-    const usernameErrorMsg = fixture.debugElement.nativeElement.querySelector('#username-error-msg');
-    const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('#password-error-msg');
-
-    expect(usernameErrorMsg).toBeDefined();
-    expect(usernameErrorMsg.innerHTML).toContain('Please enter username');
+    expect(emailErrorMsg).toBeDefined();
+    expect(emailErrorMsg.innerHTML).toContain('Email is required');
 
     expect(passwordErrorMsg).toBeDefined();
-    expect(passwordErrorMsg.innerHTML).toContain('Please enter password');
+    expect(passwordErrorMsg.innerHTML).toContain('Password is required');
   });
 
-  // it('Display Error Msg when password as more than maximum length criteria', () => {
-  //   form.get('username').setValue('V@gmail.com');
-  //   form.get('password').setValue('12345766164654646546464646646');
+  it('Display Username Error Msg when Username is blank', () => {
+    const controls = component.f;
+    controls.username.setValue('');
+    controls.password.setValue('123456');
+    component.onLogin();
+    fixture.detectChanges();
 
-  //   const button = fixture.debugElement.nativeElement.querySelector('#login');
-  //   button.click();
-  //   fixture.detectChanges();
+    const emailErrorMsg = fixture.debugElement.nativeElement.querySelector('.email-required');
 
-  //   const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('#password-error-maxlength');
+    expect(emailErrorMsg).toBeDefined();
+    expect(emailErrorMsg.innerHTML).toContain('Email is required');
+  });
 
-  //   expect(passwordErrorMsg).toBeDefined();
-  //   expect(passwordErrorMsg.innerHTML).toContain('Should not have more than 20 characters');
-  // });
+  it('Display Password Error Msg when Password is blank', () => {
+    const controls = component.f;
+    controls.username.setValue('vinutha@gmail.com');
+    controls.password.setValue('');
+    component.onLogin();
+    fixture.detectChanges();
 
-  // it('Display Error Msg when password min length criteria is not meeting', () => {
-  //   form.get('username').setValue('V@gmail.com');
-  //   form.get('password').setValue('1234');
+    const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('.password-required');
 
-  //   const button = fixture.debugElement.nativeElement.querySelector('#login');
-  //   button.click();
-  //   fixture.detectChanges();
+    expect(passwordErrorMsg).toBeDefined();
+    expect(passwordErrorMsg.innerHTML).toContain('Password is required');
+  });
 
-  //   const passwordErrorMsg = fixture.debugElement.nativeElement.querySelector('#password-error-minlength');
-
-  //   expect(passwordErrorMsg).toBeDefined();
-  //   expect(passwordErrorMsg.innerHTML).toContain('Please enter 6 characters Passowrd');
-  // });
+  it('Should login with valid form', () => {
+    const controls = component.f;
+    controls.username.setValue('vinutha@ibm.com');
+    controls.password.setValue('V8@1234');
+    component.onLogin();
+    expect(component.submitted).toEqual(true);
+  });
 });

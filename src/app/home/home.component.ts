@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from '../app.state';
 import { User } from '../user/model/user.model';
-import { getUser } from '../user/state/user.actions';
+import { autoLogout, getUser } from '../user/state/user.actions';
 import { getUserName } from '../user/state/user.selector';
 
 @Component({
@@ -14,7 +15,7 @@ import { getUserName } from '../user/state/user.selector';
 export class HomeComponent implements OnInit {
   user: User = new User();
   userData :Observable<any>;
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>,private router:Router) { }
 
   ngOnInit() {
    this.userData= this.store.select(getUserName)
@@ -25,5 +26,8 @@ export class HomeComponent implements OnInit {
     }
   });
   }
-
+  logout(): void {
+    this.store.dispatch(autoLogout());
+    this.router.navigate(['login']);
+  }
 }

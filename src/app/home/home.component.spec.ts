@@ -31,11 +31,11 @@ describe('HomeComponent', () => {
       expect(component).toBeTruthy();
     });
   
-    it('should render title', () => {
-      const fixture = TestBed.createComponent(HomeComponent);
-      fixture.detectChanges();
-      const compiled = fixture.nativeElement;
-      expect(compiled.querySelector('h4').textContent).toContain('Welcome');
-    });
+    // it('should render title', () => {
+    //   const fixture = TestBed.createComponent(HomeComponent);
+    //   fixture.detectChanges();
+    //   const compiled = fixture.nativeElement;
+    //   expect(compiled.querySelector('h4').textContent).toContain('Welcome');
+    // });
   });
   

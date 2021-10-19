@@ -18,6 +18,13 @@ export class UserEffects {
                 console.log(action.password);
              return this.userservice.userLogin(action.email,action.password).pipe(map((user:User)=>{
                 return loginSuccess({user});
+            //    if(user.email === action.email && user.password === action.password){
+            //        console.log("true");
+            //     return loginSuccess({user});
+            //    }
+            //     else{
+            //         return autoLogout();
+            //     } 
              }))
         }));
     })

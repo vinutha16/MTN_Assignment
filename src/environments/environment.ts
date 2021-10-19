@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  "LOGIN_URL":"https://run.mocky.io/v3/f47c1e89-5677-42ba-ab09-aca2df55829e"
+  "LOGIN_URL":"https://run.mocky.io/v3/bcdbd157-bc9c-4a01-a682-ad6b530a20da"
 };
 
 /*
